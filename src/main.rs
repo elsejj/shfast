@@ -39,12 +39,14 @@ fn main() -> Result<()>{
     for file_name in file_names.iter() {
         let t1 = chrono::Local::now();
         let size = read_file(file_name, &mut buff)?;
+        let t2 = chrono::Local::now();
         let (data, _) = buff.split_at(size);
         parser.parse_file(data).unwrap();
-        let t2 = chrono::Local::now();
+        let t3 = chrono::Local::now();
 
-        let span = t2 - t1;
-        println!("parse used: {:?} ms", span.num_milliseconds());
+        let span1 = t2 - t1;
+        let span2 = t3 - t2;
+        println!("read used {:?} ms, parse used: {:?} ms", span1.num_milliseconds(), span2.num_milliseconds());
     }
     Ok(())
 }

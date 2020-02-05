@@ -32,7 +32,6 @@ impl MktdtParser {
         for line in splitter {
             self.parse_line(line);
         }
-        println!("map sie {:?}", self.cached.len());
         Ok(true)
     }
 
@@ -64,7 +63,6 @@ impl MktdtParser {
             if sn == 6 {
                 if let Ok(dt) = self.parse_datetime(field) {
                     self.file_time = dt;
-                    println!("{:?}", dt);
                 }
             }
         }
@@ -126,7 +124,16 @@ impl MktdtParser {
                             },
                             Err(err) => println!("Time {:?} {:?}", err, String::from_utf8_lossy(field))
                         }
-                    }else{
+                    }else if n >=3 && n < (fields_map.len()/2){
+                        let i = (n - 3) * 2;
+                        let fid = fields_map[i+1];
+                        let num = self.parse_number(field);
+                        let s = unsafe{&mut *obj_ptr};
+                        if self.set_field(fid, num, s) {
+                            changed = true;
+                        }
+
+                        /*
                         for i in (0..fields_map.len()).step_by(2) {
                             if n == fields_map[i] {
                                 let fid = fields_map[i];
@@ -137,6 +144,7 @@ impl MktdtParser {
                                 }
                             }
                         }
+                        */
 
                     }
                 },
